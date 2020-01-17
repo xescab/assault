@@ -7,9 +7,11 @@ def fetch(url):
     pass
 
 
-def worker(name, queue, results):
+async def worker(name, queue, results):
     """A function to take unmake requests from a queue and perform the work then add resutls to the resutls list"""
-    pass
+    while True:
+        item = await queue.get()
+        print(f"{name} read {item}")
 
 
 async def distribute_work(url, requests, concurrency, results):
