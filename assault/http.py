@@ -1,4 +1,5 @@
 import asyncio
+import time
 
 
 def fetch(url):
@@ -11,11 +12,34 @@ def worker(name, queue, results):
     pass
 
 
-def distribute_work(url, requests, concurrency, results):
+async def distribute_work(url, requests, concurrency, results):
     """Divide up the work int obatches and collect the final results"""
-    pass
+    queue = asyncio.Queue()
+
+    for _ in range(requests):
+        queue.put_nowait(url)
+
+    tasks = []
+    for i in range(concurrency):
+        task = asyncio.create_task(worker(f"worker-{i+1}", queue, results))
+        tasks.append(task)
+
+    started_at = time.monotonic()
+    await queue.join()  # triggers work to be done
+    total_time = time.monotonic() - started_at
+
+    for task in tasks:
+        task.cancel()  # stops the workers, as work has finished
+
+    print("---")
+    print(
+        f"{concurrency} workers took {total_time:.2f} seconds to complete {len(results)} requests"
+    )
 
 
 def assault(url, requests, concurrency):
     """Entrypoint to make requests"""
-    pass
+    results = []
+    asyncio.run(distribute_work(url, requests, concurrency, results))
+    print(results)
+
