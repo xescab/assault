@@ -36,7 +36,11 @@ class Results:
         >>> results.slowest()
         6.1
         """
-        pass
+        slowest_request_time = 0.0
+        for request in self.requests:
+            if request["request_time"] > slowest_request_time:
+                slowest_request_time = request["request_time"]
+        return slowest_request_time
 
     def fastest(self) -> float:
         """
@@ -55,7 +59,11 @@ class Results:
         >>> results.fastest()
         1.04
         """
-        pass
+        fastest_request_time = 1000.0
+        for request in self.requests:
+            if request["request_time"] < fastest_request_time:
+                fastest_request_time = request["request_time"]
+        return fastest_request_time
 
     def average_time(self) -> float:
         """
@@ -72,9 +80,9 @@ class Results:
         ...     'request_time': 1.04
         ... }])
         >>> results.average_time()
-        9.846666667
+        3.533333333333333
         """
-        pass
+        return self.total_time / len(self.requests)
 
     def total_time(self) -> float:
         pass
@@ -96,4 +104,9 @@ class Results:
         >>> results.successful_requests()
         2
         """
-        pass
+        count = 0
+        for request in self.requests:
+            if request["status_code"] == 200:
+                count = count + 1
+        return count
+
