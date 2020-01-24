@@ -12,6 +12,7 @@ black = "*"
 click = "*"
 assault = {editable = true,path = "."}
 asyncio = "*"
+requests = "*"
 
 [requires]
 python_version = "3.7"
